@@ -12,7 +12,7 @@ html_tag_pattern = re.compile(r'<[^>]*?>')
 config = ConfigParser()
 config.read('settings.ini')
 
-def make_values_for_tweet(web, dt, room, category):
+def make_values_of_tweet(web, dt, room, category):
     # 時間(Hour)ごとのつぶやきの数を集計する
     values = {i: 0 for i in range(0, 24)} # ひな型
     page_num = 1
@@ -32,7 +32,7 @@ def make_values_for_tweet(web, dt, room, category):
 
 def aggregate_tweet(all_tweet, date_t, values):
     # つぶやきから日時のみを抽出
-    date_list = all_tweet.find_all(class_='time')
+    date_list = all_tweet.find_all(class_='date')
     # 日時の文字列をdatetime.datetimeに変換
     datetime_list = [datetime.datetime.strptime(remove_html_tag(date), '%Y/%m/%d %H:%M') for date in date_list]
     # 抽出した日時の中に引数の日時が含まれているか確認し、含まれている場合にグラフ用のvaluesを更新する
@@ -120,8 +120,8 @@ def main():
     web = WebInterface(login_url, login_user, login_password)
 
     # つぶやきの数を時間ごとに集計
-    pure_tweet_value = make_values_for_tweet(web, dt, '1', 'pure')
-    adult_tweet_value = make_values_for_tweet(web, dt, '2', 'adult')
+    pure_tweet_value = make_values_of_tweet(web, dt, '1', 'pure')
+    adult_tweet_value = make_values_of_tweet(web, dt, '2', 'adult')
     
     # グラフを出力
     make_graph(pure_tweet_value, adult_tweet_value, dt.date())
